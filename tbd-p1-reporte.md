@@ -1,10 +1,10 @@
 ## **Instrucciones para el Reporte de la Práctica 1: Introducción a MySQL**
 
-### **1. Portada**
+### **1. Portada (opcional)**
 - **Título del Reporte:** "Reporte de la Práctica 1: Introducción a MySQL".
 - Incluir nombre completo del estudiante, fecha, curso o asignatura, y nombre del instructor.
 
-### **2. Índice**
+### **2. Índice (opcional)**
 - Crear un índice que liste todas las secciones y subsecciones del reporte con su respectiva numeración de páginas.
 
 ### **3. Introducción**
