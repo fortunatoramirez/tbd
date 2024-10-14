@@ -214,10 +214,11 @@ En esta práctica, aprenderás a mejorar la apariencia de tu página web utiliza
 
 1. **Mejora el diseño de la página**:
    
-   Modifica los estilos, personaliza los colores o el diseño usando más propiedades CSS. Podrían agregar más estilos como:
+   Revisa el archivo de styles.css, ¿Existen estilos para elementos repetidos? ¿Qué otra adecuación le podrías hacer al sistema para que la apariencia en general sea más agradable? Modifica los estilos, personaliza los colores o el diseño usando más propiedades CSS. Podrían agregar más estilos como:
    
    - **Colores personalizados**.
    - **Fuente diferente**.
    - **Ajustes para móviles** (usando `media queries`).
+   - **Etc.
 
 ---
