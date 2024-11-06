@@ -127,7 +127,49 @@ proyecto/
 
 ---
 
-### Paso 4: Crear una Barra de Navegación en `navbar.html`
+### Paso 4: Modificación en el Código de Inicio de Sesión
+
+En el código de la ruta de inicio de sesión (`/login`), después de validar que la contraseña es correcta, agrega el `tipo_usuario` a `req.session.user`. Así, cada vez que un usuario inicie sesión, la información de su tipo de usuario se guardará en la sesión y estará disponible para todas las rutas protegidas.
+
+Por ejemplo:
+
+```javascript
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Consulta para obtener el usuario y su tipo
+    const query = 'SELECT * FROM usuarios WHERE username = ?';
+    connection.query(query, [username], (err, results) => {
+        if (err) {
+            return res.send('Error al obtener el usuario');
+        }
+
+        if (results.length === 0) {
+            return res.send('Usuario no encontrado');
+        }
+
+        const user = results[0];
+
+        // Verificar la contraseña
+        const isPasswordValid = bcrypt.compareSync(password, user.password);
+        if (!isPasswordValid) {
+            return res.send('Contraseña incorrecta');
+        }
+
+        // Almacenar la información del usuario en la sesión
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            tipo_usuario: user.tipo_usuario // Aquí se establece el tipo de usuario en la sesión
+        };
+
+        // Redirigir al usuario a la página principal
+        res.redirect('/');
+    });
+});
+```
+
+### Paso 5: Crear una Barra de Navegación en `navbar.html`
 
 1. **Crear una Barra de Navegación**: Añade en `navbar.html` la barra de navegación con enlaces condicionales según el tipo de usuario.
 
@@ -166,7 +208,7 @@ proyecto/
 
 ---
 
-### Paso 5: Prueba de Funcionalidad y Control de Acceso
+### Paso 6: Prueba de Funcionalidad y Control de Acceso
 
 1. **Registro de Usuarios con Código de Acceso**: Registra usuarios utilizando diferentes códigos de acceso para cada tipo de usuario.
 
