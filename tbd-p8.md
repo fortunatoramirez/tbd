@@ -169,42 +169,144 @@ app.post('/login', (req, res) => {
 });
 ```
 
-### Paso 5: Crear una Barra de Navegación en `navbar.html`
+### Paso 5: Crear y Configurar una Barra de Navegación Dinámica (`navbar.html`) con Petición AJAX desde el Navegador
 
-1. **Crear una Barra de Navegación**: Añade en `navbar.html` la barra de navegación con enlaces condicionales según el tipo de usuario.
+En este paso, vamos a crear una barra de navegación dinámica que se adapte al tipo de usuario. La barra de navegación se construirá en un archivo aparte llamado `navbar.html`, y el contenido cambiará según los permisos del usuario (por ejemplo, admin, médico, paciente). Para obtener el tipo de usuario, haremos una solicitud AJAX desde el navegador hacia el servidor, de forma que podamos controlar y mostrar las opciones de navegación apropiadas en la página principal.
+
+1. **Crear el archivo de la barra de navegación `navbar.html`**
+
+   En la carpeta `public`, crea un archivo llamado `navbar.html`. Este archivo contendrá los enlaces de navegación básicos y será el mismo para todos los usuarios. Los enlaces adicionales se añadirán dinámicamente según el tipo de usuario, que será obtenido mediante AJAX desde el servidor.
+
+   **Contenido de `navbar.html`:**
 
    ```html
+   <!-- Barra de Navegación Básica -->
    <nav>
-       <ul>
+       <ul id="menu">
            <li><a href="/">Inicio</a></li>
-           <!-- Opciones para Admin -->
-           <% if (tipo_usuario === 'admin') { %>
-               <li><a href="/ver-usuarios">Ver Usuarios</a></li>
-               <li><a href="/gestionar-registros">Gestionar Registros</a></li>
-           <% } %>
-           <!-- Opciones para Médico -->
-           <% if (tipo_usuario === 'medico') { %>
-               <li><a href="/ver-pacientes">Ver Pacientes</a></li>
-               <li><a href="/editar-pacientes">Editar Pacientes</a></li>
-           <% } %>
-           <!-- Opciones para Paciente -->
-           <% if (tipo_usuario === 'paciente') { %>
-               <li><a href="/ver-mis-datos">Mis Datos</a></li>
-           <% } %>
-           <li><a href="/logout">Cerrar Sesión</a></li>
        </ul>
    </nav>
    ```
 
-2. **Servir la Barra en `index.html`**: Utiliza una función de `include` para integrar la barra en `index.html`. 
+2. **Configurar una ruta en el servidor para enviar el tipo de usuario**
+
+   En `server.js`, crea una nueva ruta que envíe el tipo de usuario (admin, médico, o paciente) al cliente en formato JSON. Esta ruta será solicitada desde el navegador para determinar qué opciones de navegación mostrar.
+
+   ```javascript
+   // Ruta para obtener el tipo de usuario actual
+   app.get('/tipo-usuario', requireLogin, (req, res) => {
+       res.json({ tipo_usuario: req.session.user.tipo_usuario });
+   });
+   ```
+
+   Esta ruta se protegerá con `requireLogin` para asegurar que solo los usuarios autenticados puedan acceder a la información del tipo de usuario.
+
+3. **Incorporar `navbar.html` en `index.html`**
+
+   Ahora, en `index.html`, incluimos `navbar.html` utilizando JavaScript. Esto permite cargar el menú básico y posteriormente hacer una solicitud AJAX para actualizar el menú según el tipo de usuario.
+
+   **Contenido de `index.html`:**
 
    ```html
-   <!-- index.html -->
-   <header>
-       <!-- Incluir barra de navegación -->
-       <% include navbar.html %>
-   </header>
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Página Principal</title>
+       <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+       <!-- Incluir barra de navegación desde navbar.html -->
+       <div id="navbar"></div>
+
+       <script>
+           // Insertar el contenido de navbar.html en el elemento con id "navbar"
+           fetch('/navbar.html')
+               .then(response => response.text())
+               .then(data => {
+                   document.getElementById('navbar').innerHTML = data;
+               })
+               .catch(error => console.error('Error cargando el navbar:', error));
+       </script>
+   </body>
+   </html>
    ```
+
+   En este paso, estamos solicitando `navbar.html` y añadiéndolo al elemento `div` con `id="navbar"`.
+
+4. **Hacer una Solicitud AJAX para Obtener el Tipo de Usuario y Actualizar el Menú de Navegación**
+
+   Después de cargar `navbar.html`, se necesita realizar una segunda solicitud para obtener el tipo de usuario desde el servidor y actualizar el menú de navegación con las opciones apropiadas.
+
+   En el mismo script de `index.html`, añade el siguiente código:
+
+   ```html
+   <script>
+       // Solicitar el tipo de usuario y ajustar el menú en función de este
+       fetch('/tipo-usuario')
+           .then(response => response.json())
+           .then(data => {
+               const menu = document.getElementById('menu');
+               const tipoUsuario = data.tipo_usuario;
+
+               // Agregar opciones de menú según el tipo de usuario
+               if (tipoUsuario === 'admin') {
+                   menu.innerHTML += '<li><a href="/ver-usuarios">Ver Usuarios</a></li>';
+                   menu.innerHTML += '<li><a href="/gestionar-registros">Gestionar Registros</a></li>';
+               } else if (tipoUsuario === 'medico') {
+                   menu.innerHTML += '<li><a href="/ver-pacientes">Ver Pacientes</a></li>';
+                   menu.innerHTML += '<li><a href="/editar-pacientes">Editar Pacientes</a></li>';
+               } else if (tipoUsuario === 'paciente') {
+                   menu.innerHTML += '<li><a href="/ver-mis-datos">Mis Datos</a></li>';
+               }
+
+               // Opción de cerrar sesión para todos los tipos de usuario
+               menu.innerHTML += '<li><a href="/logout">Cerrar Sesión</a></li>';
+           })
+           .catch(error => console.error('Error obteniendo el tipo de usuario:', error));
+   </script>
+   ```
+
+   Con este código, se realiza una solicitud `fetch` a la ruta `/tipo-usuario` para obtener el tipo de usuario y, según su valor, se añaden las opciones correspondientes al menú.
+
+5. **Estilizar el Menú en `styles.css`**
+
+   Puedes añadir estilos a la barra de navegación en `styles.css` para darle un diseño uniforme y atractivo. A continuación se presenta un ejemplo básico:
+
+   ```css
+   /* Estilo para el contenedor de la barra de navegación */
+   nav {
+       background-color: #333;
+       color: white;
+       padding: 10px;
+   }
+
+   /* Estilo para los enlaces del menú */
+   nav ul {
+       list-style-type: none;
+       margin: 0;
+       padding: 0;
+       display: flex;
+   }
+
+   nav ul li {
+       margin-right: 20px;
+   }
+
+   nav ul li a {
+       color: white;
+       text-decoration: none;
+       padding: 5px 10px;
+   }
+
+   nav ul li a:hover {
+       background-color: #555;
+       border-radius: 4px;
+   }
+   ```
+
+   Este estilo añadirá un fondo oscuro a la barra de navegación y resaltará las opciones cuando se desplace el cursor sobre ellas.
 
 ---
 
@@ -215,8 +317,10 @@ app.post('/login', (req, res) => {
 2. **Prueba de Control de Acceso**:
    - Intenta acceder a rutas protegidas con diferentes usuarios y roles.
    - Verifica que el acceso es permitido o denegado correctamente según el tipo de usuario.
+   - Agrega las rutas y la funcionalidad de cada ruta de acuerdo a lo que consideres necesario además de la que se tienen de la práctica anterior: ver, ordenar, eliminar, etc., de acuerdo a cada usuario.
 
 3. **Barra de Navegación Condicional**: Comprueba que solo se muestran los enlaces correspondientes al tipo de usuario que ha iniciado sesión.
+4. **Realiza las modificaciones que consideres adecuadas de acuerdo a funcionalidad y estética.
 
 ---
 
