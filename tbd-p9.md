@@ -5,7 +5,8 @@
 2. Cargar una **barra de navegación** en múltiples páginas y hacer que parezca fija.  
 3. Implementar una **búsqueda en tiempo real** usando `keyup` y consultas dinámicas a la base de datos.  
 4. Manejar **carga y descarga de archivos Excel** desde y hacia la base de datos.
-5. Ajustar el servidor y la base de datos a la zona horaria correcta.  
+5. Ajustar el servidor y la base de datos a la zona horaria correcta.
+6. Configurar un usuario en la base de datos.
 
 ---
 
@@ -100,6 +101,60 @@
    DB_PASSWORD=
    DB_NAME=biomedica
    ```
+   
+   Una vez configurado el paquete `dotenv`, puedes acceder a las variables definidas en el archivo `.env` usando `process.env.NOMBRE_VARIABLE`. Esto permite separar la configuración sensible del código y facilita su gestión.
+   
+   #### Ejemplo:
+   
+   1. **Archivo `.env`:**  
+      ```env
+      DB_HOST=localhost
+      DB_USER=usuario
+      DB_PASS=contrasena123
+      DB_NAME=mi_base_datos
+      PORT=3000
+      ```
+   
+   2. **Acceso a las Variables en el Código:**
+   
+      ```js
+      const mysql = require('mysql');
+      const express = require('express');
+      require('dotenv').config(); // Cargar las variables de entorno
+   
+      // Configuración de la base de datos
+      const db = mysql.createConnection({
+        host: process.env.DB_HOST,       // Host desde .env
+        user: process.env.DB_USER,       // Usuario desde .env
+        password: process.env.DB_PASS,   // Contraseña desde .env
+        database: process.env.DB_NAME    // Nombre de la base de datos desde .env
+      });
+   
+      // Conectar a la base de datos
+      db.connect(err => {
+        if (err) {
+          console.error('Error al conectar con la base de datos:', err);
+          return;
+        }
+        console.log('Conexión exitosa a la base de datos');
+      });
+   
+      // Configuración del servidor
+      const app = express();
+      const port = process.env.PORT || 3000; // Puerto desde .env o valor por defecto
+   
+      app.listen(port, () => {
+        console.log(`Servidor corriendo en el puerto ${port}`);
+      });
+      ```
+   
+   #### Explicación:
+   
+   - **`require('dotenv').config();`**: Carga las variables del archivo `.env` en `process.env`.
+   - **`process.env.DB_HOST`, `process.env.DB_USER`, etc.**: Acceden a las variables de entorno configuradas en el archivo `.env`.
+   - **Puerto del servidor (`process.env.PORT`)**: Permite cambiar el puerto sin modificar el código, ajustando solo el archivo `.env`.
+   
+   Este enfoque mejora la seguridad y flexibilidad del proyecto al mantener la configuración sensible fuera del código fuente.
 
 ---
 
@@ -397,4 +452,4 @@
 
 ---
 
-### **Paso 10: agregar estas funcionalidades a la Práctica 8**
+### **Paso 10: Agregar estas funcionalidades a la Práctica 8**
