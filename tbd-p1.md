@@ -53,39 +53,61 @@ Familiarizar al estudiante con los conceptos básicos y las operaciones fundamen
    - **Columnas (Campos):** Cada columna representa un atributo de los datos, como nombre, edad, etc.
    - **Claves Primarias:** Un campo (o conjunto de campos) que identifica de manera única cada registro en la tabla.
 
+Un **query** (consulta) es una instrucción escrita en SQL que permite interactuar con la base de datos para realizar operaciones como recuperar, insertar, actualizar o eliminar información.
+
+#### **Estructura de un Query SQL**
+Los queries SQL siguen una estructura general compuesta por:
+
+1. **Comando principal:** Define la operación que se realizará (`SELECT`, `INSERT`, `UPDATE`, `DELETE`, etc.).
+2. **Cláusula `FROM` o `INTO`:** Indica la tabla con la que se trabajará.
+3. **Condiciones (`WHERE`, `ORDER BY`, etc.):** Permiten filtrar o modificar el comportamiento del query.
+
+Ejemplo de una consulta (`SELECT`):
+
+```sql
+SELECT nombre, salario FROM empleados WHERE salario > 3000 ORDER BY nombre ASC;
+```
+
+En este caso:
+- `SELECT` indica que se recuperarán datos.
+- `nombre, salario` son las columnas que se extraerán.
+- `FROM empleados` especifica la tabla de origen.
+- `WHERE salario > 3000` filtra los datos.
+- `ORDER BY nombre ASC` ordena los resultados alfabéticamente.
+
 ---
 
 ### **Sección 3: Iniciando Sesión y Gestión de Usuarios**
 
 **Objetivo:** Aprender a iniciar sesión en MySQL y manejar usuarios y permisos.
 
-1. **Iniciar sesión en MySQL:**
-   - El estudiante debe iniciar sesión como el usuario root con el siguiente comando:
+#### **1. Iniciar sesión en MySQL como root**
+```bash
+mysql -u root -p
+```
 
-     ```bash
-     mysql -u root -p
-     ```
+#### **2. Crear un nuevo usuario**
+El estudiante debe reemplazar `"nuevo_usuario"` con el nombre de usuario que prefiera:
 
-2. **Crear un nuevo usuario:**
-   - El estudiante creará un usuario llamado `nuevo_usuario` utilizando la siguiente instrucción SQL:
+```sql
+CREATE USER 'nuevo_usuario'@'localhost' IDENTIFIED BY 'contraseña_segura';
+```
 
-     ```sql
-     CREATE USER 'nuevo_usuario'@'localhost' IDENTIFIED BY 'contraseña_segura';
-     ```
+#### **3. Asignar permisos al nuevo usuario**
+```sql
+GRANT ALL PRIVILEGES ON *.* TO 'nuevo_usuario'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
 
-3. **Asignar permisos:**
-   - Se deben otorgar todos los privilegios al nuevo usuario sobre todas las bases de datos:
-
-     ```sql
-     GRANT ALL PRIVILEGES ON *.* TO 'nuevo_usuario'@'localhost' WITH GRANT OPTION;
-     ```
-
-4. **Aplicar cambios:**
-   - El estudiante debe asegurarse de que los cambios en los permisos se apliquen correctamente:
-
-     ```sql
-     FLUSH PRIVILEGES;
-     ```
+#### **4. Cerrar sesión como root y acceder con el nuevo usuario**
+Para salir de MySQL, escribir:
+```sql
+EXIT;
+```
+Para iniciar sesión con el nuevo usuario:
+```bash
+mysql -u nuevo_usuario -p
+```
 
 ---
 
@@ -204,4 +226,3 @@ Familiarizar al estudiante con los conceptos básicos y las operaciones fundamen
 
 ---
 
-Esta práctica cubre los conceptos y operaciones fundamentales que todo estudiante debe conocer para empezar a trabajar con MySQL de manera efectiva. Al completar esta práctica, el estudiante habrá adquirido una base sólida para realizar operaciones básicas de gestión de bases de datos y tablas.
