@@ -435,14 +435,23 @@
    ```
 
 2. **Actualizar la Conexión (server.js):**  
-   Cambia el usuario en la configuración de la conexión:
+   Actualiza el nuevo usuario en el archivo de las variables del entorno. Para que cambie la configuración de la conexión:
+
+   ```env
+   PORT=3000
+   DB_HOST=localhost
+   DB_USER= en lugar de root colocar el nombre del nuevo usario
+   DB_PASSWORD= colocar la contraseña del nuevo usuario
+   DB_NAME=biomedica
+   ```
 
    ```js
-   const db = mysql.createConnection({
-     host: 'localhost',
-     user: 'biomedico',
-     password: 'password123',
-     database: 'biomedica'
+
+    const db = mysql.createConnection({
+        host: process.env.DB_HOST,       // Host desde .env
+        user: process.env.DB_USER,       // Usuario desde .env
+        password: process.env.DB_PASS,   // Contraseña desde .env
+        database: process.env.DB_NAME    // Nombre de la base de datos desde .env
    });
    ```
 
