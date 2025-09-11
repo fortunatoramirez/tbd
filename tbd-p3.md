@@ -86,7 +86,7 @@
    **Diagrama de Concepto de `EXPLAIN`:**
 
    ```
-   Consulta: SELECT * FROM empleados WHERE salario > 50000;
+   Consulta: EXPLAIN SELECT * FROM empleados WHERE salario > 50000;
 
    Salida de EXPLAIN:
    +----+-------------+------------+------+---------------+------+---------+
